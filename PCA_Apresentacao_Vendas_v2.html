@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.C.A. — Performance Comercial Avançada | Descompliquei</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--or:#E85D24;--or2:#FF7A42;--or3:#B54518;--bk:#090909;--bk2:#111;--bk3:#1A1A1A;--bk4:#242424;--bk5:#2E2E2E;--wh:#F4F4F4;--wh2:#CECECE;--gy:#777;--gy2:#444}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Barlow',sans-serif;color:var(--wh)}
+
+.deck{position:relative;width:100%;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s ease;transform:translateX(80px);background:var(--bk)}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.slide.out{opacity:0;transform:translateX(-80px)}
+
+/* NAV */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:12px 40px;background:rgba(9,9,9,.95);border-bottom:1px solid rgba(232,93,36,.15);backdrop-filter:blur(16px)}
+.topbar-logo img{height:30px}
+.topbar-dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:600px;justify-content:center}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--gy2);cursor:pointer;transition:background .2s,transform .2s,width .2s}
+.dot.active{background:var(--or);transform:scale(1.35)}
+.dot.section{width:8px;height:8px;border-radius:2px}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.ctr{font-size:11px;color:var(--gy);letter-spacing:.1em;min-width:48px;text-align:right}
+.btn{background:transparent;border:1px solid var(--gy2);color:var(--wh2);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;cursor:pointer;transition:all .2s}
+.btn:hover{border-color:var(--or);color:var(--or)}
+.btn.prim{background:var(--or);border-color:var(--or);color:#fff}
+.btn.prim:hover{background:var(--or2)}
+
+/* SECTION LABEL strip */
+.sec-strip{position:fixed;bottom:0;left:0;right:0;z-index:98;height:3px;background:var(--bk4)}
+.sec-strip-fill{height:100%;background:var(--or);transition:width .4s ease}
+
+/* SLIDE INNER */
+.si{flex:1;padding:76px 60px 32px;display:flex;flex-direction:column;overflow:hidden}
+.si.center{justify-content:center;align-items:center;text-align:center}
+.si.row{flex-direction:row;align-items:center;gap:60px}
+
+/* TYPOGRAPHY */
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--or);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';width:24px;height:2px;background:var(--or);flex-shrink:0}
+.h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,9vw,120px);line-height:.9;letter-spacing:.02em;color:var(--wh)}
+.h1 .ac{color:var(--or)}
+.h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,6vw,80px);line-height:.95;letter-spacing:.02em;color:var(--wh)}
+.h2 .ac{color:var(--or)}
+.h3{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,52px);line-height:1;letter-spacing:.02em;color:var(--wh)}
+.h3 .ac{color:var(--or)}
+.sub{font-family:'Barlow Condensed',sans-serif;font-size:clamp(14px,2vw,22px);font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--wh2);line-height:1.3}
+.body{font-size:clamp(13px,1.4vw,16px);line-height:1.75;color:var(--gy);max-width:680px}
+.body strong{color:var(--wh2);font-weight:600}
+.body b{color:var(--or);font-weight:700}
+
+/* DIVIDER */
+.div-line{width:100%;height:1px;background:linear-gradient(90deg,var(--or) 0%,transparent 60%);margin:18px 0}
+
+/* STAT ROW */
+.stat-row{display:flex;gap:0;margin-top:20px}
+.stat{border-left:2px solid var(--or);padding:14px 24px}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--or);line-height:1}
+.stat-l{font-size:11px;color:var(--gy);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;line-height:1.3}
+
+/* CARD GRIDS */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:2px;flex:1}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;flex:1}
+.gcard{background:var(--bk3);padding:28px;border-top:2px solid var(--or);display:flex;flex-direction:column;gap:10px}
+.gcard-icon{font-size:28px}
+.gcard-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--wh)}
+.gcard-text{font-size:13px;color:var(--gy);line-height:1.65;flex:1}
+
+/* ENTREGAVEL DETAIL SLIDE */
+.ed-wrap{display:flex;gap:40px;flex:1;overflow:hidden}
+.ed-left{flex:0 0 320px;display:flex;flex-direction:column;justify-content:center}
+.ed-right{flex:1;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.ed-icon-big{font-size:64px;margin-bottom:20px;line-height:1}
+.ed-label{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.ed-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,52px);color:var(--wh);line-height:1;margin-bottom:12px}
+.ed-name .ac{color:var(--or)}
+.ed-desc{font-size:15px;color:var(--gy);line-height:1.75;margin-bottom:20px}
+.ed-desc strong{color:var(--wh2)}
+.ed-value{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(232,93,36,.4);padding:10px 20px;margin-top:auto}
+.ed-value-label{font-size:10px;color:var(--gy);text-transform:uppercase;letter-spacing:.08em}
+.ed-value-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--or);line-height:1}
+.feat-row{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;background:var(--bk3);border-left:2px solid transparent;transition:border-color .2s}
+.feat-row:hover{border-left-color:var(--or)}
+.feat-check{width:20px;height:20px;background:var(--or);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:10px;font-weight:700;color:#fff}
+.feat-name{font-size:14px;font-weight:600;color:var(--wh);margin-bottom:3px;line-height:1.3}
+.feat-desc{font-size:12px;color:var(--gy);line-height:1.5}
+
+/* BG ACCENT */
+.bg-text{position:absolute;font-family:'Bebas Neue',sans-serif;pointer-events:none;opacity:.04;line-height:1;color:var(--or);z-index:0}
+.slide-inner-z{position:relative;z-index:1;flex:1;display:flex;flex-direction:column}
+
+/* IA SLIDE */
+.ia-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,93,36,.1);border:1px solid rgba(232,93,36,.3);padding:6px 16px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--or);margin-bottom:20px;width:fit-content}
+.ia-scenario{background:var(--bk3);border-left:3px solid var(--or);padding:18px 22px;margin-bottom:6px}
+.ia-scenario-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--or);margin-bottom:6px}
+.ia-scenario-text{font-size:13px;color:var(--wh2);line-height:1.6}
+.ia-how{background:var(--bk4);padding:16px 20px;display:flex;gap:12px;align-items:flex-start;margin-bottom:6px}
+.ia-how-icon{font-size:20px;flex-shrink:0}
+.ia-how-text{font-size:13px;color:var(--gy);line-height:1.6}
+.ia-how-text strong{color:var(--wh2)}
+
+/* CLARO COLUMNS */
+.claro-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;flex:1}
+.claro-col{display:flex;flex-direction:column;background:var(--bk3);overflow:hidden}
+.claro-top{padding:16px 18px;border-top:3px solid var(--or)}
+.claro-letter-big{font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--or);line-height:.9}
+.claro-word{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--wh);margin-top:4px}
+.claro-body{flex:1;padding:14px 18px;border-top:1px solid var(--bk5)}
+.claro-body p{font-size:12px;color:var(--gy);line-height:1.65}
+
+/* TRILHA */
+.trilha-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1}
+.t-pilar{display:flex;flex-direction:column;gap:2px}
+.t-head{padding:14px 20px;border-left:3px solid var(--or);margin-bottom:2px}
+.t-head.p1{background:rgba(232,93,36,.08);border-color:var(--or)}
+.t-head.p2{background:rgba(130,100,240,.07);border-left-color:#8878DD}
+.t-head-tag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.p1 .t-head-tag{color:var(--or)}
+.p2 .t-head-tag{color:#8878DD}
+.t-head-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--wh)}
+.mod{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--bk3);border-left:2px solid transparent;transition:all .2s}
+.mod:hover{border-left-color:var(--or);background:var(--bk4)}
+.mod-n{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--or);flex-shrink:0;line-height:1;min-width:20px}
+.mod-nm{font-size:12px;font-weight:600;color:var(--wh);line-height:1.3;margin-bottom:1px}
+.mod-ds{font-size:11px;color:var(--gy);line-height:1.35}
+
+/* VALOR TABLE */
+.vtable{width:100%;border-collapse:collapse;flex:1}
+.vtable th{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gy2);padding:10px 16px;text-align:left;border-bottom:1px solid var(--bk4)}
+.vtable th:last-child{text-align:right}
+.vtable td{padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px;color:var(--wh2);vertical-align:middle;line-height:1.4}
+.vtable td:first-child{font-size:10px;color:var(--gy);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;font-weight:700}
+.vtable td:last-child{text-align:right;font-weight:700;color:var(--wh);white-space:nowrap;font-family:'Barlow Condensed',sans-serif;font-size:16px;letter-spacing:.02em}
+.vtable tr:hover td{background:rgba(255,255,255,.015)}
+.vtotal td{background:rgba(232,93,36,.08)!important;border-top:1px solid var(--or);border-bottom:none}
+.vtotal td:first-child{color:var(--or);font-size:11px}
+.vtotal td:last-child{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--or)}
+
+/* PRECO SLIDES */
+.preco-giant{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,12vw,150px);line-height:.85;color:var(--wh)}
+.preco-giant.riscado{color:var(--gy2);text-decoration:line-through;text-decoration-color:var(--or)}
+.preco-giant .ac{color:var(--or)}
+.preco-parcel{font-size:clamp(16px,2vw,22px);color:var(--wh2);margin-top:16px}
+.preco-parcel strong{color:var(--or)}
+.preco-eco{display:flex;align-items:center;gap:16px;padding:14px 24px;background:rgba(232,93,36,.08);border:1px solid rgba(232,93,36,.3);margin-top:24px;width:fit-content}
+.preco-eco-l{font-size:11px;color:var(--gy);text-transform:uppercase;letter-spacing:.08em}
+.preco-eco-v{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--or)}
+.preco-badge{display:inline-block;background:var(--or);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 20px;margin-bottom:20px}
+.preco-badge.tabela{background:var(--gy2)}
+.preco-cta-btn{display:inline-block;background:var(--or);color:#fff;font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:20px 56px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;transition:background .2s;margin-top:28px}
+.preco-cta-btn:hover{background:var(--or2)}
+.preco-items{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+.preco-item{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--wh2)}
+.preco-item::before{content:'✓';width:20px;height:20px;background:var(--or);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* PROGRESS BAR */
+.pbar{position:fixed;bottom:0;left:0;right:0;height:2px;background:var(--bk4);z-index:99}
+.pbar-fill{height:100%;background:var(--or);transition:width .4s ease}
+
+/* ARROW HINT */
+.hint{position:fixed;bottom:14px;right:40px;display:flex;gap:6px;align-items:center;font-size:10px;color:var(--gy2);letter-spacing:.06em;z-index:50}
+.kbadge{width:24px;height:24px;border:1px solid var(--gy2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gy2)}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="topbar-logo"><img id="logo-img" alt="Descompliquei"></div>
+  <div class="topbar-dots" id="dots"></div>
+  <div class="topbar-right">
+    <span class="ctr" id="ctr">1/1</span>
+    <button class="btn" onclick="prev()">← Ant</button>
+    <button class="btn prim" onclick="next()">Próx →</button>
+  </div>
+</nav>
+
+<!-- ========== S01 CAPA ========== -->
+<div class="slide active" id="s01">
+  <div class="bg-text" style="font-size:280px;right:-40px;bottom:-60px">PCA</div>
+  <div class="si row" style="position:relative;z-index:1">
+    <div style="flex:1">
+      <div class="eyebrow">Descompliquei Marketing · Produto Comercial</div>
+      <div class="h1">P.<span class="ac">C.</span>A.</div>
+      <div class="sub" style="margin:14px 0 24px">Performance Comercial Avançada</div>
+      <div class="body">O único sistema que transforma o profissional de saúde no <strong>gestor comercial da própria clínica</strong> — com metodologia proprietária, plataforma completa e inteligência artificial treinada para o seu setor.</div>
+      <div class="div-line"></div>
+    </div>
+    <div style="flex:0 0 340px;display:flex;flex-direction:column;gap:2px">
+      <div style="background:var(--bk3);border-left:3px solid var(--or);padding:20px 24px">
+        <div class="stat-n">R$700k+</div>
+        <div class="stat-l">Faturados para clínicas parceiras</div>
+      </div>
+      <div style="background:var(--bk3);border-left:3px solid var(--or);padding:20px 24px">
+        <div class="stat-n">6 IAs</div>
+        <div class="stat-l">Exclusivas para o comercial da saúde</div>
+      </div>
+      <div style="background:var(--bk3);border-left:3px solid var(--or);padding:20px 24px">
+        <div class="stat-n">Método C.L.A.R.O.</div>
+        <div class="stat-l">Metodologia proprietária 100% validada</div>
+      </div>
+      <div style="background:var(--bk3);border-left:3px solid var(--or);padding:20px 24px">
+        <div class="stat-n">12 Módulos</div>
+        <div class="stat-l">Da Fundação Clínica ao Motor Comercial</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S02 EMPRESA ========== -->
+<div class="slide" id="s02" style="background:var(--bk2)">
+  <div class="si">
+    <div class="eyebrow">A empresa</div>
+    <div class="h2">Descompliquei <span class="ac">Marketing</span></div>
+    <div class="sub" style="margin-bottom:20px">Consultoria estratégica exclusiva para profissionais de saúde</div>
+    <div class="grid2" style="flex:1">
+      <div class="gcard">
+        <div class="gcard-icon">🎯</div>
+        <div class="gcard-title">Especialistas no setor de saúde</div>
+        <div class="gcard-text">Atuamos exclusivamente com médicos, dentistas, especialistas em harmonização facial, cirurgia plástica, odontologia estética e demais áreas da saúde. Cada entregável, ferramenta e módulo foi desenvolvido especificamente para essa realidade — não é adaptação, é criação original para o setor.</div>
+      </div>
+      <div class="gcard">
+        <div class="gcard-icon">🧠</div>
+        <div class="gcard-title">Metodologia proprietária validada</div>
+        <div class="gcard-text">O Método C.L.A.R.O. é a metodologia exclusiva da Descompliquei — 5 fases obrigatórias e sequenciais que transformam uma clínica sem sistema em uma operação comercial de alta performance. Não é teoria: é um processo que já gerou mais de R$700k para clínicas reais.</div>
+      </div>
+      <div class="gcard">
+        <div class="gcard-icon">⚡</div>
+        <div class="gcard-title">Tecnologia que trabalha por você</div>
+        <div class="gcard-text">Stack de IA Comercial com 6 inteligências artificiais treinadas especificamente para objeções, follow-up, reativação, análise de atendimento, campanhas e estruturação de ofertas — tudo integrado dentro de uma plataforma central acessível 24h.</div>
+      </div>
+      <div class="gcard">
+        <div class="gcard-icon">📊</div>
+        <div class="gcard-title">Resultado é obrigação</div>
+        <div class="gcard-text">Nossa operação é construída em torno de métricas reais e mensuráveis: CPL, taxa de conversão, ticket médio e LTV. O cliente não acha que cresceu — ele vê o crescimento nos dados, semana a semana, dentro da plataforma.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S03 R$700k ========== -->
+<div class="slide" id="s03">
+  <div class="bg-text" style="font-size:220px;right:-20px;bottom:-50px">700K</div>
+  <div class="si row" style="position:relative;z-index:1">
+    <div style="flex:0 0 auto">
+      <div class="eyebrow">Resultado comprovado</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(70px,14vw,190px);color:var(--or);line-height:.85">R$<br>700.000+</div>
+      <div class="sub" style="margin-top:12px">faturados para clínicas parceiras</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+      <div style="background:var(--bk3);padding:20px 24px;border-left:2px solid var(--or)"><strong style="font-size:14px;color:var(--wh);display:block;margin-bottom:6px">💰 Faturamento real, não estimado</strong><div class="body" style="font-size:13px">Cada real veio de método aplicado — posicionamento certo, lead qualificado, atendimento com script e follow-up executado. Não foi sorte. Foi processo.</div></div>
+      <div style="background:var(--bk3);padding:20px 24px;border-left:2px solid var(--or)"><strong style="font-size:14px;color:var(--wh);display:block;margin-bottom:6px">🏥 Clínicas de todos os portes</strong><div class="body" style="font-size:13px">Médicos solos, clínicas com equipe de 4+ pessoas, especialistas em HOF, odontologia estética e cirurgia plástica. A metodologia funciona para qualquer porte e especialidade.</div></div>
+      <div style="background:var(--bk3);padding:20px 24px;border-left:2px solid var(--or)"><strong style="font-size:14px;color:var(--wh);display:block;margin-bottom:6px">🔁 Resultado recorrente, não pontual</strong><div class="body" style="font-size:13px">As clínicas que aplicam o Método C.L.A.R.O. não dependem mais de picos de campanha. O comercial funciona todo mês, com ou sem promoção — porque o sistema está ativo.</div></div>
+      <div style="background:var(--bk3);padding:20px 24px;border-left:2px solid var(--or)"><strong style="font-size:14px;color:var(--wh);display:block;margin-bottom:6px">📈 Crescimento com dados</strong><div class="body" style="font-size:13px">CPL, conversão, ticket médio e LTV monitorados em tempo real. O dono enxerga exatamente onde está ganhando e onde ainda pode crescer — sem depender de intuição.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S04 MÉTODO CLARO ========== -->
+<div class="slide" id="s04" style="background:var(--bk2)">
+  <div class="si">
+    <div class="eyebrow">Metodologia proprietária</div>
+    <div class="h2">Método <span class="ac">C.L.A.R.O.</span></div>
+    <div class="sub" style="margin-bottom:20px;font-size:14px">A única metodologia criada para transformar profissionais de saúde em gestores comerciais</div>
+    <div class="claro-cols">
+      <div class="claro-col"><div class="claro-top"><div class="claro-letter-big">C</div><div class="claro-word">Clareza</div></div><div class="claro-body"><p>Posicionamento, ICP definido, nicho de procedimento escolhido com método, precificação estratégica e oferta estruturada. <strong style="color:var(--wh2)">Sem clareza, nenhuma campanha funciona.</strong> Aqui a clínica para de atirar para todo lado e começa a atrair o paciente certo — antes de gastar R$1 em tráfego.</p></div></div>
+      <div class="claro-col"><div class="claro-top"><div class="claro-letter-big">L</div><div class="claro-word">Leads</div></div><div class="claro-body"><p>Tráfego pago estratégico calibrado para o ICP definido + IA de pré-atendimento operando 24h no WhatsApp. <strong style="color:var(--wh2)">O lead chega qualificado, não frio.</strong> A clínica para de receber curioso e começa a receber paciente com real intenção de tratamento.</p></div></div>
+      <div class="claro-col"><div class="claro-top"><div class="claro-letter-big">A</div><div class="claro-word">Atendimento</div></div><div class="claro-body"><p>Script de primeiro atendimento, cadência ativada e método de qualificação consultiva. <strong style="color:var(--wh2)">O lead não esfria.</strong> A recepção sabe exatamente o que dizer, quando dizer e como conduzir o paciente até o agendamento — sem improviso.</p></div></div>
+      <div class="claro-col"><div class="claro-top"><div class="claro-letter-big">R</div><div class="claro-word">Resultado</div></div><div class="claro-body"><p>Cadência automatizada de follow-up, reativação de base inativa e análise de atendimentos com IA. <strong style="color:var(--wh2)">Até 60% das vendas acontecem após o primeiro contato.</strong> O dinheiro que estava sendo deixado na mesa volta para o funil automaticamente.</p></div></div>
+      <div class="claro-col"><div class="claro-top"><div class="claro-letter-big">O</div><div class="claro-word">Operação</div></div><div class="claro-body"><p>Gestão comercial com método, métricas monitoradas semanalmente e rotina estruturada de dono. <strong style="color:var(--wh2)">Você sai da execução e assume o papel de gestor</strong> — delegando com controle, decidindo com dados e crescendo de forma sustentável.</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S05 TRILHA C.L.A.R.O. ========== -->
+<div class="slide" id="s05">
+  <div class="si">
+    <div class="eyebrow">Trilha de aprendizado</div>
+    <div class="h3">Trilha <span class="ac">C.L.A.R.O.</span> — 12 Módulos para dominar o comercial</div>
+    <div class="trilha-grid" style="margin-top:16px">
+      <div class="t-pilar">
+        <div class="t-head p1"><div class="t-head-tag">Pilar 1 · Fases C e L — Fundação Clínica</div><div class="t-head-name">Entenda o negócio antes de vender</div></div>
+        <div class="mod"><div class="mod-n">1</div><div><div class="mod-nm">Clareza de negócio e posicionamento</div><div class="mod-ds">Nicho, propósito e diferenciação no mercado de saúde</div></div></div>
+        <div class="mod"><div class="mod-n">2</div><div><div class="mod-nm">ICP — o paciente ideal da sua clínica</div><div class="mod-ds">Perfil demográfico, comportamental e emocional</div></div></div>
+        <div class="mod"><div class="mod-n">3</div><div><div class="mod-nm">Nicho de procedimento</div><div class="mod-ds">Matriz de procedimentos por lucratividade e potencial</div></div></div>
+        <div class="mod"><div class="mod-n">4</div><div><div class="mod-nm">Precificação estratégica</div><div class="mod-ds">Preço por valor percebido, ancoragem e margem real</div></div></div>
+        <div class="mod"><div class="mod-n">5</div><div><div class="mod-nm">Estruturação de oferta</div><div class="mod-ds">Transformar procedimento em solução irresistível</div></div></div>
+        <div class="mod"><div class="mod-n">6</div><div><div class="mod-nm">Métricas de marketing e comercial</div><div class="mod-ds">CPL, conversão, ticket, LTV — decisão com dados</div></div></div>
+      </div>
+      <div class="t-pilar">
+        <div class="t-head p2"><div class="t-head-tag">Pilar 2 · Fases A, R e O — Motor Comercial</div><div class="t-head-name">Opere o comercial com método</div></div>
+        <div class="mod"><div class="mod-n">7</div><div><div class="mod-nm">Jornada do paciente</div><div class="mod-ds">Do lead ao tratamento — onde as clínicas perdem oportunidades</div></div></div>
+        <div class="mod"><div class="mod-n">8</div><div><div class="mod-nm">Primeiro atendimento</div><div class="mod-ds">Script, qualificação consultiva e agendamento</div></div></div>
+        <div class="mod"><div class="mod-n">9</div><div><div class="mod-nm">Follow-up e reativação</div><div class="mod-ds">Cadência D+1, D+3, D+7 e reativação de base inativa</div></div></div>
+        <div class="mod"><div class="mod-n">10</div><div><div class="mod-nm">Gestão de objeções</div><div class="mod-ds">"Está caro", "vou pensar" — respostas sem pressão</div></div></div>
+        <div class="mod"><div class="mod-n">11</div><div><div class="mod-nm">Análise de atendimento com IA</div><div class="mod-ds">Revisar conversas reais e melhorar conversão</div></div></div>
+        <div class="mod"><div class="mod-n">12</div><div><div class="mod-nm">Gestão comercial do dono</div><div class="mod-ds">Rotina semanal, delegação, metas e crescimento</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S06 HUB DE GESTÃO COMERCIAL ========== -->
+<div class="slide" id="s06" style="background:var(--bk2)">
+  <div class="bg-text" style="font-size:200px;right:-30px;bottom:-40px">HUB</div>
+  <div class="si" style="position:relative;z-index:1">
+    <div class="eyebrow">Plataforma central</div>
+    <div class="h2">Hub de Gestão <span class="ac">Comercial</span></div>
+    <div class="sub" style="margin-bottom:24px">O ambiente único onde tudo acontece</div>
+    <div class="ed-wrap">
+      <div class="ed-left">
+        <div class="ed-icon-big">🖥️</div>
+        <div class="ed-desc">O Hub de Gestão Comercial é a <strong>plataforma central do P.C.A.</strong> — o ambiente onde o profissional executa o Método C.L.A.R.O., acessa todas as IAs, assiste à Trilha e monitora os dados da clínica em tempo real.<br><br>Tudo que antes estava espalhado em dezenas de ferramentas diferentes <strong>agora vive em um único lugar</strong>, com lógica comercial de saúde já embutida.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Valor de mercado</div><div class="ed-value-num">R$ 4.800/mês</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Trilha C.L.A.R.O. integrada</div><div class="feat-desc">12 módulos em vídeo com entregas práticas que alimentam a plataforma com dados reais da sua clínica — você aprende e já configura ao mesmo tempo</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Pipeline Clínico (CRM) embutido</div><div class="feat-desc">Funil comercial configurado com a lógica de atendimento de clínicas de saúde — não é um CRM genérico adaptado, é um sistema criado para o setor</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Stack de IA Comercial acessível 24h</div><div class="feat-desc">Todas as 6 IAs disponíveis dentro da plataforma, com acesso imediato pelo celular ou computador, a qualquer hora do dia</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Painel de métricas em tempo real</div><div class="feat-desc">CPL, taxa de conversão por etapa, ticket médio e LTV atualizados em tempo real — o dono vê o desempenho comercial sem precisar de planilha</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Entradas de dados da clínica</div><div class="feat-desc">Formulários e campos que alimentam o "cérebro" da plataforma com informações do seu negócio — tornando as IAs e recomendações cada vez mais personalizadas</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S07 CRM / PIPELINE CLÍNICO ========== -->
+<div class="slide" id="s07">
+  <div class="bg-text" style="font-size:200px;right:-30px;bottom:-40px">CRM</div>
+  <div class="si" style="position:relative;z-index:1">
+    <div class="eyebrow">Pipeline Clínico</div>
+    <div class="h2">CRM <span class="ac">Comercial</span><br>para Clínicas</div>
+    <div class="ed-wrap">
+      <div class="ed-left">
+        <div class="ed-icon-big">📊</div>
+        <div class="ed-desc">O CRM deixa de ser uma ferramenta externa e passa a ser o <strong>núcleo operacional da metodologia</strong>. O profissional acessa um funil já configurado com a lógica comercial da Descompliquei — não um software genérico que ele precisa aprender do zero.<br><br><strong>Você enxerga cada lead em cada etapa do funil</strong>, sabe exatamente o que fazer com cada um e tem automações trabalhando enquanto você atende.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Valor de mercado</div><div class="ed-value-num">R$ 3.600/mês</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Funil comercial pré-configurado com o Método C.L.A.R.O.</div><div class="feat-desc">Etapas de atendimento já montadas de acordo com a jornada do paciente — da chegada do lead até o fechamento do tratamento</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Controle total das métricas de conversão</div><div class="feat-desc">Volume de leads, taxa de conversão por etapa, tempo médio de resposta e taxa de agendamento — tudo visível em painel único</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Automações de cadência de mensagens</div><div class="feat-desc">Sequências automáticas de WhatsApp pré-configuradas: primeiro contato, follow-up D+1, D+3, D+7 e reativação de leads frios — o sistema trabalha por você</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Histórico completo de cada lead</div><div class="feat-desc">Cada interação registrada, cada mensagem salva — a recepção sempre sabe o histórico do contato antes de responder, sem perder contexto</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Visão de desempenho da recepção</div><div class="feat-desc">O dono acompanha o desempenho comercial da equipe com dados — não com impressão — e pode dar feedback baseado em números reais</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S08 IA PRÉ-ATENDIMENTO ========== -->
+<div class="slide" id="s08" style="background:var(--bk2)">
+  <div class="si">
+    <div class="eyebrow">Stack de IA Comercial · IA 1 de 6</div>
+    <div class="h2">IA de <span class="ac">Pré-Atendimento</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ia-badge">🤖 Ativa 24h no WhatsApp</div>
+        <div class="ed-desc">Agente de inteligência artificial que <strong>atende o lead automaticamente no WhatsApp</strong>, qualifica o interesse, coleta informações iniciais e prepara o terreno para o atendimento humano.<br><br>Enquanto o médico está na sala de cirurgia, a IA está recebendo e qualificando o próximo paciente.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Valor de mercado</div><div class="ed-value-num">R$ 2.400/mês</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="ia-scenario"><div class="ia-scenario-label">Problema que resolve</div><div class="ia-scenario-text">Lead entra no WhatsApp às 22h querendo saber sobre harmonização. Sem a IA, fica sem resposta até o dia seguinte — e vai para o concorrente que respondeu em 5 minutos.</div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Resposta imediata 24 horas por dia</div><div class="feat-desc">Tempo de resposta de segundos — não de horas. O lead não espera, não esfria e não vai para o concorrente enquanto sua clínica está fechada</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Qualificação automática do lead</div><div class="feat-desc">A IA faz as perguntas certas: procedimento de interesse, disponibilidade, localização e orçamento — e passa para a recepção só o lead qualificado</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Coleta de informações iniciais</div><div class="feat-desc">Nome, contato, procedimento e dúvida principal registrados automaticamente no CRM — a recepção já sabe tudo antes de abrir a conversa</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Aumenta conversão antes do atendimento humano</div><div class="feat-desc">O lead que chega para a recepção humana já foi aquecido pela IA — o trabalho de convencer começa antes mesmo da primeira conversa real</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S09 IA OBJEÇÕES ========== -->
+<div class="slide" id="s09">
+  <div class="si">
+    <div class="eyebrow">Stack de IA Comercial · IA 2 de 6</div>
+    <div class="h2">IA de <span class="ac">Objeções</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ia-badge">💬 Na hora da objeção</div>
+        <div class="ed-desc">A IA de Objeções é usada <strong>no momento exato em que o paciente trava</strong>. A recepção digita a objeção que recebeu e a IA gera a resposta mais eficaz — com linguagem de autoridade, não de pressão.<br><br>Chega de improvisar na hora mais crítica da venda.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Incluído no</div><div class="ed-value-num">Stack de IA</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="ia-scenario"><div class="ia-scenario-label">Situação real</div><div class="ia-scenario-text">"Achei caro, vou pensar e te falo" — a recepção trava, diz "tudo bem" e o lead some. Com a IA de Objeções, ela tem a resposta certa em segundos, sem pressionar o paciente.</div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">"Está caro" — sem dar desconto</div><div class="feat-desc">A IA reposiciona o valor do tratamento, ancorando o resultado — não o preço — e mantendo a autoridade do profissional intacta durante a negociação</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">"Vou pensar" — sem perder o lead</div><div class="feat-desc">Resposta que mantém o lead no funil, cria urgência genuína baseada em contexto real e define um próximo passo concreto sem soar desesperado</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">"Preciso falar com meu marido/esposa"</div><div class="feat-desc">Estratégia consultiva que envolve o tomador de decisão sem pressionar — e mantém a conversa aberta até o fechamento</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Banco de objeções personalizado</div><div class="feat-desc">A IA aprende as objeções específicas da sua clínica e do seu procedimento âncora — as respostas são calibradas para a sua realidade, não genéricas</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S10 IA ANÁLISE ATENDIMENTO ========== -->
+<div class="slide" id="s10" style="background:var(--bk2)">
+  <div class="si">
+    <div class="eyebrow">Stack de IA Comercial · IA 3 de 6</div>
+    <div class="h2">IA de Análise de <span class="ac">Atendimento</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ia-badge">🔍 Diagnóstico de conversão</div>
+        <div class="ed-desc">A IA que <strong>analisa atendimentos reais</strong> da sua clínica e diz exatamente o que deu errado — em qual momento o lead esfriou, o que poderia ter sido dito diferente e o que fez o paciente não fechar.<br><br>Quem revisa o próprio atendimento <strong>evolui 3x mais rápido</strong> do que quem só executa.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Incluído no</div><div class="ed-value-num">Stack de IA</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="ia-scenario"><div class="ia-scenario-label">Como usar</div><div class="ia-scenario-text">Cole o texto de um atendimento real do WhatsApp. A IA identifica os 3 pontos de ruptura, classifica a qualidade da condução e entrega um plano de melhoria específico para aquela conversa.</div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Identifica o momento exato da ruptura</div><div class="feat-desc">A IA aponta em qual mensagem o lead começou a esfriar — geralmente não é onde o profissional imagina, e esse diagnóstico muda tudo</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Classifica a qualidade da condução</div><div class="feat-desc">Nota de 1 a 10 para abertura, qualificação, apresentação de valor, resposta a objeções e condução ao agendamento — com justificativa para cada nota</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Sugere o que deveria ter sido dito</div><div class="feat-desc">Para cada ponto de falha, a IA propõe a resposta ideal — o profissional copia, aprende e aplica no próximo atendimento com muito mais precisão</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Base para feedback de equipe</div><div class="feat-desc">O dono usa a análise para dar feedback objetivo à recepção — baseado em dados reais, não em impressão subjetiva — criando melhoria contínua no time</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S11 IA FOLLOW-UP ========== -->
+<div class="slide" id="s11">
+  <div class="si">
+    <div class="eyebrow">Stack de IA Comercial · IA 4 de 6</div>
+    <div class="h2">IA de <span class="ac">Follow-Up</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ia-badge">📲 Nunca mais lead sem retorno</div>
+        <div class="ed-desc">A IA de Follow-Up <strong>gera mensagens personalizadas</strong> para cada perfil de lead, com base no procedimento de interesse, no estágio do funil e no tempo sem resposta.<br><br>Elimina o bloqueio criativo da recepção de <strong>"não sei o que falar"</strong> — e garante que nenhum lead seja esquecido no funil.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Incluído no</div><div class="ed-value-num">Stack de IA</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="ia-scenario"><div class="ia-scenario-label">Problema que resolve</div><div class="ia-scenario-text">A recepção não faz follow-up porque "não sabe o que falar sem parecer chata". Com a IA, ela tem a mensagem certa para cada momento — e a clínica para de perder até 60% das oportunidades por falta de retorno.</div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Cadência D+1, D+3, D+7 automática</div><div class="feat-desc">Para cada etapa da cadência, a IA gera uma mensagem diferente com abordagem diferente — não é spam, é progressão estratégica de relacionamento com o lead</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Mensagem personalizada por procedimento</div><div class="feat-desc">A IA considera o procedimento de interesse do lead — follow-up para harmonização é completamente diferente de follow-up para implante ou cirurgia plástica</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Tom ajustado ao perfil do lead</div><div class="feat-desc">Lead frio recebe mensagem de reaproximação suave. Lead quente recebe mensagem com urgência e próximo passo claro — a IA calibra o tom automaticamente</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Ativado direto no CRM</div><div class="feat-desc">A sequência de follow-up é configurada no Pipeline Clínico e disparada automaticamente — a recepção só precisa personalizar a mensagem sugerida antes de enviar</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S12 IA REMARKETING ========== -->
+<div class="slide" id="s12" style="background:var(--bk2)">
+  <div class="si">
+    <div class="eyebrow">Stack de IA Comercial · IA 5 de 6</div>
+    <div class="h2">IA de <span class="ac">Remarketing</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ia-badge">🔄 Reative quem sumiu</div>
+        <div class="ed-desc">A IA de Remarketing <strong>cria mensagens de reativação</strong> para leads antigos e pacientes que sumiram — com abordagem estratégica que não parece invasiva nem desesperada.<br><br>A base da sua clínica é uma <strong>mina de ouro</strong> que a maioria dos profissionais nunca sabe explorar.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Incluído no</div><div class="ed-value-num">Stack de IA</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="ia-scenario"><div class="ia-scenario-label">O dinheiro que já está na sua base</div><div class="ia-scenario-text">A clínica tem 300 leads antigos que nunca fecharam e 150 pacientes que fizeram um procedimento e sumiram. A IA de Remarketing transforma esses contatos em agendamentos — sem precisar investir em novos leads.</div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Reativação de leads que não fecharam</div><div class="feat-desc">Para leads que conversaram, demonstraram interesse mas não agendaram — a IA monta a abordagem perfeita com base no procedimento e no tempo de inatividade</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Reativação de pacientes inativos</div><div class="feat-desc">Pacientes que fizeram um procedimento há 6 ou 12 meses — a IA cria mensagem de retorno personalizada que não parece marketing, parece cuidado com o paciente</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Campanhas sazonais de reativação</div><div class="feat-desc">Datas estratégicas (Carnaval, Verão, Dia das Mães) — a IA monta campanhas de reativação calibradas para o momento certo com o procedimento certo</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Sequência automatizada no CRM</div><div class="feat-desc">Campanhas de remarketing configuradas no Pipeline Clínico e disparadas em lote — a recepção só aprova e envia, a IA faz o trabalho pesado de criação</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S13 IA CAMPANHAS ========== -->
+<div class="slide" id="s13">
+  <div class="si">
+    <div class="eyebrow">Stack de IA Comercial · IA 6 de 6</div>
+    <div class="h2">IA de Estruturação de <span class="ac">Campanhas</span> e Ofertas</div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ia-badge">📣 Brief inteligente de campanha</div>
+        <div class="ed-desc">Duas IAs em uma: a <strong>IA de Campanhas</strong> estrutura o brief do anúncio por procedimento e público, e a <strong>IA de Ofertas</strong> ajuda a construir e comunicar pacotes que justificam valor sem precisar dar desconto.<br><br>O profissional deixa de depender de agência para saber o que anunciar.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Incluído no</div><div class="ed-value-num">Stack de IA</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="ia-scenario"><div class="ia-scenario-label">Como funciona na prática</div><div class="ia-scenario-text">O profissional informa o procedimento, o público e o objetivo. A IA entrega: ângulo criativo, copy do anúncio, público sugerido, CTA e estrutura de oferta — em menos de 2 minutos.</div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Brief completo de campanha por procedimento</div><div class="feat-desc">Ângulo criativo, copy do anúncio, segmentação sugerida e CTA — entregues em formato pronto para repassar para quem executa o tráfego</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Estruturação de oferta com ancoragem de preço</div><div class="feat-desc">Monta pacotes de tratamento com os 5 elementos de uma oferta irresistível: resultado, prazo, garantia, bônus e facilidade — sem precisar dar desconto</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Comunicação de valor, não de preço</div><div class="feat-desc">A IA escreve a oferta com linguagem de autoridade — o paciente percebe o valor do tratamento antes de ver o número, reduzindo a resistência ao preço</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Calendário de campanhas sugerido</div><div class="feat-desc">A IA mapeia as melhores datas para cada procedimento do cardápio da clínica e organiza um calendário de campanhas mensal para o profissional executar</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S14 DIAGNÓSTICO COMERCIAL ========== -->
+<div class="slide" id="s14" style="background:var(--bk2)">
+  <div class="bg-text" style="font-size:200px;right:-20px;bottom:-40px">D.C.I.</div>
+  <div class="si" style="position:relative;z-index:1">
+    <div class="eyebrow">Suporte e acompanhamento · 1 de 3</div>
+    <div class="h2">Diagnóstico Comercial <span class="ac">Inicial</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ed-icon-big">🗺️</div>
+        <div class="ed-desc">Sessão <strong>1:1 com o time da Descompliquei</strong> realizada antes de qualquer aula ou execução. É o mapeamento completo do seu negócio — procedimentos, gargalos, metas e funil — para que tudo na plataforma seja configurado <strong>sob medida para a sua clínica</strong>.<br><br>Sem esse diagnóstico, você usaria a plataforma de forma genérica. Com ele, tudo começa personalizado.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Valor de mercado</div><div class="ed-value-num">R$ 2.400</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Mapeamento completo do negócio</div><div class="feat-desc">Procedimentos, ticket médio atual, volume de leads, taxa de conversão real e gargalos do comercial — tudo levantado antes de começar para não perder tempo com o que não é prioritário</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Definição de metas para os próximos 90 dias</div><div class="feat-desc">O time define junto com o profissional metas realistas e ambiciosas para o período — baseadas no histórico real da clínica, não em estimativas genéricas</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Calibração da plataforma e das IAs</div><div class="feat-desc">Com base no diagnóstico, as IAs e o CRM são configurados com as informações específicas da sua clínica — o programa já começa personalizado, não genérico</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Identificação das prioridades de execução</div><div class="feat-desc">O time indica quais módulos da Trilha têm prioridade máxima para o seu caso — você começa pelo que vai gerar resultado mais rápido, não pela ordem padrão</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Plano de ação customizado para os primeiros 30 dias</div><div class="feat-desc">Sai da sessão com um plano claro de execução para o primeiro mês — sem dúvida sobre o que fazer primeiro, segundo e terceiro</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S15 SESSÃO TÁTICA SEMANAL ========== -->
+<div class="slide" id="s15">
+  <div class="si">
+    <div class="eyebrow">Suporte e acompanhamento · 2 de 3</div>
+    <div class="h2">Sessão Tática <span class="ac">Semanal</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ed-icon-big">🎯</div>
+        <div class="ed-desc">Mentoria em grupo ao vivo toda semana com o time da Descompliquei. <strong>Casos reais analisados ao vivo</strong>, decisões estratégicas tomadas em grupo e evolução coletiva com profissionais do mesmo nível.<br><br>Não é papo motivacional. É <strong>reunião de gestão comercial</strong> — com agenda, análise de dados e próximos passos definidos.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Valor de mercado</div><div class="ed-value-num">R$ 9.600</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Ao vivo toda semana, sem faltar</div><div class="feat-desc">52 sessões ao ano — toda semana o profissional tem um momento dedicado para resolver o que travou, analisar o que aconteceu e planejar a próxima semana com clareza</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Análise de casos reais ao vivo</div><div class="feat-desc">Qualquer profissional do grupo pode trazer um caso real — atendimento que não converteu, campanha que não performou, objeção difícil — e o time analisa ao vivo com todo o grupo</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Tema estratégico por semana</div><div class="feat-desc">Cada sessão tem um tema fixo: semana de conversão, semana de follow-up, semana de análise de métricas, semana de oferta — a profundidade acumula ao longo do programa</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Grupo de profissionais do mesmo nível</div><div class="feat-desc">Você está na sessão com outros profissionais de saúde que têm as mesmas dores — o aprendizado é coletivo e o benchmark é constante</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Decisões com suporte do time</div><div class="feat-desc">Precisa tomar uma decisão comercial importante? Traz para a Sessão Tática. O time da Descompliquei ajuda a estruturar o raciocínio e reduzir o risco da decisão</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S16 CANAL SUPORTE ESTRATÉGICO ========== -->
+<div class="slide" id="s16" style="background:var(--bk2)">
+  <div class="si">
+    <div class="eyebrow">Suporte e acompanhamento · 3 de 3</div>
+    <div class="h2">Canal de Suporte <span class="ac">Estratégico</span></div>
+    <div class="ed-wrap" style="margin-top:20px">
+      <div class="ed-left">
+        <div class="ed-icon-big">💬</div>
+        <div class="ed-desc">Acesso direto ao time da Descompliquei para tirar dúvidas durante a execução do dia a dia. <strong>Você nunca trava</strong> — quando bater em um ponto cego, o time orienta com decisão estratégica de alto nível.<br><br>Não é suporte técnico genérico. É <strong>acesso a especialistas</strong> que conhecem o seu negócio desde o Diagnóstico Comercial Inicial.</div>
+        <div class="ed-value"><div><div class="ed-value-label">Valor de mercado</div><div class="ed-value-num">R$ 3.600</div></div></div>
+      </div>
+      <div class="ed-right">
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Resposta de especialistas, não de atendentes</div><div class="feat-desc">Quem responde no canal conhece o Método C.L.A.R.O., conhece o setor de saúde e conhece o contexto do seu negócio — a orientação é específica, não genérica</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Dúvidas de execução respondidas no dia</div><div class="feat-desc">Travou em algum módulo da Trilha? Teve uma situação comercial que não sabe como conduzir? Acionou o canal e recebe orientação no mesmo dia útil</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Revisão de scripts e mensagens</div><div class="feat-desc">Quer validar um script de atendimento antes de usar ou revisar uma oferta que montou? Manda no canal e o time dá o feedback com ajustes específicos</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Suporte durante toda a duração do programa</div><div class="feat-desc">Do primeiro dia até o último — o canal está ativo durante todo o programa, não só nas primeiras semanas como a maioria dos produtos do mercado faz</div></div></div>
+        <div class="feat-row"><div class="feat-check">✓</div><div><div class="feat-name">Comunidade de profissionais da saúde</div><div class="feat-desc">Além do time, o grupo reúne outros profissionais do P.C.A. — a troca de experiências e benchmarks entre pares é um dos maiores valores do programa</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S17 ANCORAGEM DE VALOR pt1 ========== -->
+<div class="slide" id="s17">
+  <div class="si">
+    <div class="eyebrow">Ancoragem de valor · parte 1 de 2</div>
+    <div class="h3">O que você está <span class="ac">recebendo</span></div>
+    <div style="flex:1;overflow:auto;margin-top:16px">
+      <table class="vtable">
+        <thead>
+          <tr><th>Categoria</th><th>Entregável</th><th>Valor de mercado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Plataforma</td><td>Hub de Gestão Comercial — infraestrutura completa com acesso ilimitado durante o programa</td><td>R$ 4.800/mês</td></tr>
+          <tr><td>CRM</td><td>Pipeline Clínico configurado com o Método C.L.A.R.O. + funil comercial por etapas</td><td>R$ 3.600/mês</td></tr>
+          <tr><td>CRM</td><td>Automações de cadência de mensagens D+1, D+3, D+7 pré-configuradas no CRM</td><td>R$ 1.200/mês</td></tr>
+          <tr><td>IA 1/6</td><td>IA de Pré-Atendimento 24h — qualificação automática de leads no WhatsApp</td><td>R$ 2.400/mês</td></tr>
+          <tr><td>IA 2/6</td><td>IA de Objeções — respostas estratégicas para as 6 objeções mais comuns na saúde</td><td>R$ 1.800/mês</td></tr>
+          <tr><td>IA 3/6</td><td>IA de Análise de Atendimento — diagnóstico de conversão com plano de melhoria</td><td>R$ 2.400/mês</td></tr>
+          <tr><td>IA 4/6</td><td>IA de Follow-Up — cadência personalizada por procedimento e etapa do funil</td><td>R$ 1.600/mês</td></tr>
+          <tr><td>IA 5/6</td><td>IA de Remarketing — reativação estratégica de leads e pacientes inativos</td><td>R$ 1.600/mês</td></tr>
+          <tr><td>IA 6/6</td><td>IA de Campanhas e Ofertas — brief de anúncio + estruturação de oferta completa</td><td>R$ 2.000/mês</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:12px 16px;background:rgba(232,93,36,.06);border-top:1px solid rgba(232,93,36,.2);display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+      <span style="font-size:11px;color:var(--gy);text-transform:uppercase;letter-spacing:.1em">Subtotal · parte 1</span>
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--wh2)">R$ 21.400/mês em valor</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S18 ANCORAGEM DE VALOR pt2 ========== -->
+<div class="slide" id="s18" style="background:var(--bk2)">
+  <div class="si">
+    <div class="eyebrow">Ancoragem de valor · parte 2 de 2</div>
+    <div class="h3">Trilha, mentoria e <span class="ac">suporte</span></div>
+    <div style="flex:1;overflow:auto;margin-top:16px">
+      <table class="vtable">
+        <thead>
+          <tr><th>Categoria</th><th>Entregável</th><th>Valor de mercado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Trilha</td><td>Fundação Clínica — Módulos 1 a 6 (posicionamento, ICP, nicho, precificação, oferta, métricas)</td><td>R$ 4.200</td></tr>
+          <tr><td>Trilha</td><td>Motor Comercial — Módulos 7 a 12 (jornada, atendimento, follow-up, objeções, análise, gestão)</td><td>R$ 4.200</td></tr>
+          <tr><td>Trilha</td><td>Entregas práticas em cada módulo — configurações reais na plataforma ao longo da jornada</td><td>R$ 2.400</td></tr>
+          <tr><td>Onboarding</td><td>Diagnóstico Comercial Inicial — sessão 1:1 de mapeamento e calibração personalizada</td><td>R$ 2.400</td></tr>
+          <tr><td>Mentoria</td><td>Sessão Tática Semanal ao vivo — 12 sessões durante o programa (R$ 800 cada)</td><td>R$ 9.600</td></tr>
+          <tr><td>Suporte</td><td>Canal de Suporte Estratégico com o time durante toda a duração do programa</td><td>R$ 3.600</td></tr>
+          <tr class="vtotal">
+            <td>Valor Total</td>
+            <td style="font-size:13px;color:var(--wh2)">Soma completa de todos os entregáveis pelo preço real de mercado</td>
+            <td>R$ 55.000+</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:16px 20px;background:rgba(232,93,36,.06);border:1px solid rgba(232,93,36,.2);margin-top:8px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:14px;color:var(--wh2);line-height:1.5">Mais de <strong style="color:var(--or)">R$ 55.000 em valor</strong> reunidos em um único programa.<br>E você não vai investir nem de perto esse valor.</div>
+      <button class="btn prim" onclick="next()" style="white-space:nowrap">Ver o investimento →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S19 PREÇO DE TABELA ========== -->
+<div class="slide" id="s19">
+  <div class="bg-text" style="font-size:300px;right:-60px;bottom:-80px">25K</div>
+  <div class="si row" style="position:relative;z-index:1;align-items:center">
+    <div style="flex:1">
+      <div class="eyebrow">Preço de tabela</div>
+      <div class="h2" style="margin-bottom:16px">Valor original<br><span class="ac">sem desconto</span></div>
+      <div class="body" style="margin-bottom:24px">Pelo valor de mercado de todos os entregáveis somados — mais de <strong>R$ 55.000</strong> — o preço de tabela do P.C.A. é uma fração do que você recebe. Mesmo sem a condição especial, o investimento já seria extraordinariamente vantajoso.</div>
+      <div class="preco-badge tabela">Preço original de tabela</div><br>
+      <div class="preco-giant riscado">R$ 25.000</div>
+      <div style="margin-top:20px;padding:16px 24px;background:var(--bk3);border-left:3px solid var(--gy2);max-width:500px">
+        <div style="font-size:13px;color:var(--gy);line-height:1.7">Este seria o investimento normal para acesso ao Hub de Gestão Comercial, Stack de IA Comercial, Trilha C.L.A.R.O., Diagnóstico, Sessão Tática Semanal e Suporte Estratégico.</div>
+      </div>
+    </div>
+    <div style="flex:0 0 360px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gy);margin-bottom:8px">Você recebe tudo isso:</div>
+      <div class="preco-item">Hub de Gestão Comercial completo</div>
+      <div class="preco-item">Pipeline Clínico + Automações de CRM</div>
+      <div class="preco-item">Stack de IA Comercial — 6 IAs exclusivas</div>
+      <div class="preco-item">Trilha C.L.A.R.O. — 12 módulos completos</div>
+      <div class="preco-item">Diagnóstico Comercial Inicial (1:1)</div>
+      <div class="preco-item">Sessão Tática Semanal ao vivo</div>
+      <div class="preco-item">Canal de Suporte Estratégico</div>
+      <div style="margin-top:16px;padding:14px 20px;background:rgba(232,93,36,.08);border:1px solid rgba(232,93,36,.25);text-align:center">
+        <div style="font-size:11px;color:var(--gy);margin-bottom:6px">Mas hoje você vai pagar</div>
+        <button class="btn prim" onclick="next()" style="width:100%;padding:14px">Ver o valor especial →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S20 VALOR PROTAGONISTA ========== -->
+<div class="slide" id="s20" style="background:var(--bk2)">
+  <div class="bg-text" style="font-size:280px;right:-50px;bottom:-70px;color:var(--or)">15K</div>
+  <div class="si row" style="position:relative;z-index:1;align-items:center">
+    <div style="flex:1">
+      <div class="eyebrow">Valor protagonista · fechamento hoje</div>
+      <div class="h2" style="margin-bottom:8px">Seu <span class="ac">investimento</span><br>fechando agora</div>
+      <div class="body" style="margin-bottom:20px">50% de desconto exclusivo para quem fecha nessa reunião. Essa condição <strong>não estará disponível depois</strong> — é o Valor Protagonista da Descompliquei para quem decide agora.</div>
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gy2);text-decoration:line-through">R$ 25.000</div>
+        <div style="background:var(--or);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px">50% OFF</div>
+      </div>
+      <div class="preco-giant"><span class="ac">R$</span> 15.000</div>
+      <div class="preco-parcel">ou <strong>12x de R$ 1.526,38</strong></div>
+      <div class="preco-eco" style="margin-top:20px">
+        <div><div class="preco-eco-l">Você economiza</div><div class="preco-eco-v">R$ 10.000</div></div>
+        <div style="width:1px;height:40px;background:rgba(232,93,36,.3)"></div>
+        <div><div class="preco-eco-l">Em relação ao valor de mercado</div><div class="preco-eco-v">R$ 40.000+</div></div>
+      </div>
+    </div>
+    <div style="flex:0 0 360px;display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--bk3);border:2px solid var(--or);padding:32px;text-align:center">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--or);margin-bottom:16px">✦ Condição especial ✦</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:72px;color:var(--wh);line-height:.85;margin-bottom:8px"><span style="color:var(--or)">R$</span> 15.000</div>
+        <div style="font-size:16px;color:var(--wh2);margin-bottom:24px">ou <strong style="color:var(--or)">12x de R$ 1.526,38</strong></div>
+        <button class="preco-cta-btn" style="width:100%;padding:18px;margin-top:0" onclick="alert('Entre em contato para fechar!')">Garantir minha vaga agora</button>
+        <div style="font-size:11px;color:var(--gy);margin-top:14px;display:flex;align-items:center;justify-content:center;gap:6px">⚡ Válido apenas para fechamento nessa reunião</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--bk3);border-left:2px solid var(--or)">
+        <div style="font-size:12px;color:var(--gy);line-height:1.6">Valor total de mercado: <strong style="color:var(--wh)">R$ 55.000+</strong><br>Preço de tabela: <strong style="color:var(--wh)">R$ 25.000</strong><br>Valor protagonista hoje: <strong style="color:var(--or)">R$ 15.000</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="pbar"><div class="pbar-fill" id="pbar"></div></div>
+
+<!-- HINT -->
+<div class="hint">
+  <div class="kbadge">←</div>
+  <div class="kbadge">→</div>
+  <span>navegar</span>
+</div>
+
+<script>
+// Logo
+document.getElementById('logo-img').src = 'data:image/jpeg;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//9oADAMBAAIAAwAAACEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ876soAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH+GrBxBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfdLRQjxxMwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwQwwAwhGQiBwyzxB0kjyQAwxywzwQAQgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwRzgCBz4KgQjhRDyyrxzQDyjTzzxQBSgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADxTzQhyjS4gRgRyTBizyzwDyhTzzxSRSgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADxDSgBDzOlDRDTCSj2LwDwTyxDDTBQRSgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACzRTziwgG5yDCyTytovADzxShBxChTxSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADI2hCiShWoCiggQAgAAAQAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAODvgcuOzxkACgjgQBgADRRBwSgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf30gAOKJAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcf2gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABXukAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAgADAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABjPLDyywAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGSQ5DD2kgQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMWfmJOpI8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACBCACCCFekHHDCLAFi+IEAGDPLJGOMOCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAKOACBHhQAKHGHIFy6AIAKOPFFKKKAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAKGGACPHCBHGCBAHveBKAKKPFFKKMQKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAIKBGFE00EBGKIBMYqAKDKKNEEIKLAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALOBHIPIA19LLEJLDdKoALDDOBALMJDJKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMSAfFnLr2QDABAAKBABEBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATbuRTp1byQACCKVAJBKFEFMFCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABZ/2QIkMcQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABdP6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMPGgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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';
+
+const slides = [...document.querySelectorAll('.slide')];
+const dotsEl = document.getElementById('dots');
+const ctrEl = document.getElementById('ctr');
+const pbarEl = document.getElementById('pbar');
+let cur = 0;
+const total = slides.length;
+
+// Section groups for dot coloring
+const sections = [
+  {label:'Capa',range:[0,0]},
+  {label:'Empresa',range:[1,2]},
+  {label:'Metodologia',range:[3,4]},
+  {label:'Plataforma',range:[5,6]},
+  {label:'IAs',range:[7,12]},
+  {label:'Suporte',range:[13,15]},
+  {label:'Valor',range:[16,17]},
+  {label:'Preço',range:[18,19]},
+];
+
+slides.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.title = 'Slide '+(i+1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function update() {
+  ctrEl.textContent = (cur+1)+'/'+total;
+  pbarEl.style.width = (((cur+1)/total)*100)+'%';
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+}
+
+function goTo(n) {
+  if(n<0||n>=total) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('out');
+  const prev = cur;
+  setTimeout(()=>slides[prev].classList.remove('out'),500);
+  cur = n;
+  slides[cur].classList.add('active');
+  update();
+}
+
+function next(){goTo(cur+1);}
+function prev(){goTo(cur-1);}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') next();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prev();
+});
+
+update();
+</script>
+</body>
+</html>
